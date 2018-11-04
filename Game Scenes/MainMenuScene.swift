@@ -11,6 +11,9 @@ import GameplayKit
 
 class MainMenuScene: SKScene
 {
+    // Initialize an access to the user default storage
+    let userDefault = UserDefaults.standard;
+    
 	var PlayeButton =  SButton();
 	var ExitButton = SButton();
 	
@@ -20,16 +23,13 @@ class MainMenuScene: SKScene
 		{
 			self.PlayeButton = playButton;
 		}
-		//PlayeButton.SetupActionBegin {}
-		
-		
+        PlayeButton.SetupActionEnd { self.LoadGameScene(); }
 		
 		if let exitButton = self.childNode(withName: "ExitButton") as? SButton
 		{
 			self.ExitButton = exitButton;
 		}
-		ExitButton.SetupActionBegin { exit(0); }
-		
+		ExitButton.SetupActionEnd { exit(0); }
 		
 	}
 	
@@ -40,23 +40,47 @@ class MainMenuScene: SKScene
 	
 	override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?)
 	{
-		//let touch = touches.first;
-		//let touchLocation = touch!.location(in: self);
-		
+        let touch = touches.first;
+        let touchLocation = touch!.location(in: self);
+        let touchedNode = self.atPoint(touchLocation);
+        
+        touchedNode.touchesBegan(touches, with: event);
 	}
 	
 	override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?)
 	{
-		
+        let touch = touches.first;
+        let touchLocation = touch!.location(in: self);
+        let touchedNode = self.atPoint(touchLocation);
+        
+        touchedNode.touchesMoved(touches, with: event);
 	}
 	
 	override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?)
 	{
-		
+        let touch = touches.first;
+        let touchLocation = touch!.location(in: self);
+        let touchedNode = self.atPoint(touchLocation);
+        
+        touchedNode.touchesEnded(touches, with: event);
 	}
 	
 	override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?)
 	{
-		
+        let touch = touches.first;
+        let touchLocation = touch!.location(in: self);
+        let touchedNode = self.atPoint(touchLocation);
+        
+        touchedNode.touchesCancelled(touches, with: event);
 	}
+    
+    func LoadGameScene()
+    {
+        let newScene = GameScene(size: (self.view?.bounds.size)!);
+        let transition = SKTransition.reveal(with: .down, duration: 2);
+        self.view?.presentScene(newScene, transition: transition);
+        transition.pausesOutgoingScene = true;
+        transition.pausesIncomingScene = false;
+    }
+    
 }

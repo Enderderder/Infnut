@@ -9,17 +9,27 @@
 import SpriteKit
 import GameplayKit
 
-class GameScene: SKScene
+// Configurate the physic contact layer
+enum CategoryBitMask
 {
-	
+    static let DEFAULT: UInt32  = 0b0001;
+    static let PLAYER:  UInt32  = 0b0010;
+    static let ENEMY: UInt32    = 0b0100;
+    static let GROUND: UInt32   = 0b1000;
+}
+
+class GameScene: SKScene, SKPhysicsContactDelegate
+{
+    var player: SPlayer?
+    
     override func didMove(to view: SKView)
 	{
-		
+        CreatePlayer();
     }
 	
 	override func update(_ currentTime: TimeInterval)
 	{
-		
+        player?.Update(currentTime);
 	}
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?)
@@ -41,4 +51,18 @@ class GameScene: SKScene
 	{
 		
     }
+    
+    func CreateBackground()
+    {
+        
+    }
+    
+    func CreatePlayer()
+    {
+        player = SPlayer();
+        player!.position = CGPoint(x: self.frame.midX - 150, y: self.frame.midY);
+        self.addChild(player!);
+    }
+    
+    
 }

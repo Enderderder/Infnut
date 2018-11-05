@@ -51,17 +51,20 @@ class SButton : SKSpriteNode
 	
 	override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?)
 	{
+		// Scale down the button
+		self.setScale(0.9);
+		
 		if (m_buttonTouchBeginAct != nil)
 		{
 			m_buttonTouchBeginAct!();
 		}
-        
-        // Scale down the button
-        self.setScale(0.9);
 	}
 	
 	override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?)
 	{
+		// Scale back the button
+		self.setScale(1.0);
+		
 		if (m_buttonTouchEndAct != nil)
 		{
 			m_buttonTouchEndAct!();
@@ -74,7 +77,7 @@ class SButton : SKSpriteNode
 		{
 			m_buttonTouchMoveAct!();
 		}
-        
-        
+
 	}
+
 }

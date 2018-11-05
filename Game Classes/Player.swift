@@ -11,7 +11,14 @@ import GameplayKit
 
 class SPlayer: SKSpriteNode
 {
-    var m_bPlayerControl: Bool = false;
+	// Does the ship able to control by the player
+	var m_bPlayerControl: Bool = true;
+	
+	// Is the ship thrusting up
+	var m_bThrusting: Bool = false;
+	
+	// The thrusting speed of the ship
+	let m_thrustingForce = 500.0;
     
     override init(texture: SKTexture?, color: UIColor, size: CGSize)
     {
@@ -27,29 +34,22 @@ class SPlayer: SKSpriteNode
     
     func SetupPlayer()
     {
-        // Config
-        self.name = "Player";
-        
-        // Set the texture of the player
-        self.texture = SKTexture(imageNamed: "SpaceShip");
-        
         // Set the physics property
-        self.physicsBody = SKPhysicsBody(rectangleOf: self.size);
-        self.physicsBody?.categoryBitMask = CategoryBitMask.PLAYER;
-        self.physicsBody?.collisionBitMask = CategoryBitMask.PLAYER;
-        self.physicsBody?.contactTestBitMask = CategoryBitMask.PLAYER;
-        self.physicsBody?.affectedByGravity = true;
-        self.physicsBody?.allowsRotation = false;
-        self.physicsBody?.restitution = 0.0;
-        self.physicsBody?.linearDamping = 0.5;
-        self.physicsBody?.mass = 1.0;
+		self.physicsBody?.categoryBitMask = CategoryBitMask.PLAYER;
+		self.physicsBody?.contactTestBitMask = CategoryBitMask.COLLISION;
     }
     
     func Update(_ currentTime: TimeInterval)
     {
-        
+        if (m_bThrusting && m_bPlayerControl)
+		{
+			self.physicsBody?.applyForce(CGVector(dx: 0.0, dy: m_thrustingForce));
+		}
     }
     
-    
+	func ToogleThrust(_ b: Bool)
+	{
+		m_bThrusting = b;
+	}
     
 }

@@ -13,74 +13,47 @@ class MainMenuScene: SKScene
 {
     // Initialize an access to the user default storage
     let userDefault = UserDefaults.standard;
-    
-	var PlayeButton =  SButton();
-	var ExitButton = SButton();
+	
+	// Gesture
+	var tapGesture = UITapGestureRecognizer();
 	
 	override func didMove(to view: SKView)
 	{
-		if let playButton = self.childNode(withName: "PlayeButton") as? SButton
-		{
-			self.PlayeButton = playButton;
-		}
-        PlayeButton.SetupActionEnd { self.LoadGameScene(); }
+		SetUpTapGesture();
 		
-		if let exitButton = self.childNode(withName: "ExitButton") as? SButton
-		{
-			self.ExitButton = exitButton;
-		}
-		ExitButton.SetupActionEnd { exit(0); }
-		
-	}
-	
-	override func update(_ currentTime: TimeInterval)
-	{
-		
-	}
-	
-	override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?)
-	{
-        let touch = touches.first;
-        let touchLocation = touch!.location(in: self);
-        let touchedNode = self.atPoint(touchLocation);
-        
-        touchedNode.touchesBegan(touches, with: event);
-	}
-	
-	override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?)
-	{
-        let touch = touches.first;
-        let touchLocation = touch!.location(in: self);
-        let touchedNode = self.atPoint(touchLocation);
-        
-        touchedNode.touchesMoved(touches, with: event);
-	}
-	
-	override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?)
-	{
-        let touch = touches.first;
-        let touchLocation = touch!.location(in: self);
-        let touchedNode = self.atPoint(touchLocation);
-        
-        touchedNode.touchesEnded(touches, with: event);
-	}
-	
-	override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?)
-	{
-        let touch = touches.first;
-        let touchLocation = touch!.location(in: self);
-        let touchedNode = self.atPoint(touchLocation);
-        
-        touchedNode.touchesCancelled(touches, with: event);
+		// Set the score and high score from storage
+		let scoreLabel = self.childNode(withName: "ScoreCount") as! SKLabelNode;
+		scoreLabel.text = String(userDefault.integer(forKey: "Score"));
+		let highScoreLabel = self.childNode(withName: "HighScoreCount") as! SKLabelNode;
+		highScoreLabel.text = String(userDefault.integer(forKey: "HighScore"));
 	}
     
     func LoadGameScene()
     {
-        let newScene = GameScene(size: (self.view?.bounds.size)!);
+		view?.removeGestureRecognizer(tapGesture);
+		let newScene = SKScene(fileNamed: "GameScene");
         let transition = SKTransition.reveal(with: .down, duration: 2);
-        self.view?.presentScene(newScene, transition: transition);
+        self.view?.presentScene(newScene!, transition: transition);
         transition.pausesOutgoingScene = true;
         transition.pausesIncomingScene = false;
     }
-    
+	
+	// Bind the action when player tap the screen
+	func SetUpTapGesture()
+	{
+		guard let view = view else {return;}
+		tapGesture = UITapGestureRecognizer(target: self, action: #selector(TapAction));
+		tapGesture.numberOfTapsRequired = 1;
+		view.addGestureRecognizer(tapGesture);
+	}
+	
+	@objc func TapAction(sender: UITapGestureRecognizer)
+	{
+		var tapLocation = sender.location(in: self.view);
+		// map tap location
+		tapLocation.y = abs(self.frame.height - tapLocation.y);
+		
+		// Load game scene when click
+		self.LoadGameScene();
+	}
 }
